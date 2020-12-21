@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2020 XEBIALABS
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-->
+<synthetic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns="http://www.xebialabs.com/deployit/synthetic"
+           xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd">
+
+    <type type="mantisbt.Server" label="mantisbt: Server" extends="configuration.HttpConnection">
+        <property name="apiKey" label="API token" required="false" password="true"
+                description="The API token associated with the member account that you want to connect with" />
+    </type>
+
+    <type type="mantisbt.Task" extends="xlrelease.PythonScript" virtual="true">
+        <property name="iconLocation" default="mantisbt/mantisbt_icon.png" hidden="true"/>
+        <property name="mantisbtServer" category="input" label="Server" referenced-type="mantisbt.Server"
+                  kind="ci"/>
+        <property name="taskColor" hidden="true" default="#84C225" />
+    </type>
+
+    <type type="mantisbt.GetIssue" extends="mantisbt.Task">
+        <property name="scriptLocation" default="mantisbt/GetIssue.py" hidden="true"/>
+        <property name="issueId" category="input" kind="string" label="Issue id" required="true" description="get issue by id" />
+        <property name="issue" category="output" kind="map_string_string" required="false" label="Issue" description="Found issue properties and values"/>
+    </type>
+
+    <type type="mantisbt.UpdateIssueStatus" extends="mantisbt.Task">
+      <property name="scriptLocation" default="mantisbt/UpdateIssueStatus.py" hidden="true"/>
+      <property name="issueId" category="input" kind="string" label="Issue id" required="false" description="The id of the issue" />
+      <property name="newSatus" category="input" kind="enum" label="New status" description="New status of the issues">
+          <enum-values>
+                <value>resolved</value>
+                <value>closed</value>
+          </enum-values>
+      </property>
+      <property name="note" category="input" kind="boolean" label="Add a note" required="false" description="Check to add a note" />
+      <property name="text" category="input" kind="string" label="Note text" required="false" description="The text of the note" />
+      <property name="issue" category="output" kind="map_string_string" required="false" label="Issue" description="Issue properties and values"/>
+    </type>
+
+    <type type="mantisbt.GetIssues" extends="mantisbt.Task">
+      <property name="scriptLocation" default="mantisbt/GetIssues.py" hidden="true"/>
+      <property name="issueIds" kind="list_of_string" category="input" label="Issue ids" required="false" description="get issues by ids" />
+      <property name="issues" category="output" kind="map_string_string" required="false" label="Issues" description="id and properties of found issues"/>
+    </type>
+
+    <type type="mantisbt.UpdateIssuesStatus" extends="mantisbt.Task">
+      <property name="scriptLocation" default="mantisbt/UpdateIssuesStatus.py" hidden="true"/>
+      <property name="issueIds" category="input" kind="list_of_string" label="Issue ids" required="true" description="The ids of the issuse" />
+      <property name="newSatus" category="input" kind="enum" label="New status" required="true" description="New status of the issues">
+          <enum-values>
+                <value>resolved</value>
+                <value>closed</value>
+          </enum-values>
+      </property>
+      <property name="note" category="input" kind="boolean" label="Add a note" required="false" description="Check to add a note" />
+      <property name="text" category="input" kind="string" label="Note text" required="false" description="The text of the note" />
+      <property name="issues" category="output" kind="map_string_string" required="false" label="Issue" description="id and properties of issues"/>
+    </type>
+
+    <type type="mantisbt.CreateNotes" extends="mantisbt.Task">
+      <property name="scriptLocation" default="mantisbt/CreateNotes.py" hidden="true"/>
+      <property name="text" category="input" kind="string" label="Note text" required="true" description="The text of the note" />
+      <property name="issueId" category="input" kind="string" label="Issue id" required="false" description="The id of the issue" />
+      <property name="issueIds" category="input" kind="list_of_string" label="Issue ids" required="false" description="The ids of issues" />
+    </type>
+
+    <type type="mantisbt.IssuesByCategoryTile" label="MantisBT: Issues by category" extends="xlrelease.Tile" description="Display a list of issues">
+        <property name="scriptLocation" default="mantisbt/IssuesByCategoryTile.py" hidden="true"/>
+        <property name="mantisbtServer" category="input" label="Server" referenced-type="mantisbt.Server" kind="ci"/>
+        <property name="title" description="Tile title" default="Issues by Category" />
+        <property name="issueIds" category="input" description="The ids of issues" label="Issues ids" kind="list_of_string" />
+        <!-- Path to the HTML template of the summary view of the tile -->
+        <property name="uri" hidden="true" default="include/mantisbt/issuesbycategory/issues-by-category-summary-view.html" />
+        <!-- Path to the HTML template of the detail view of the tile -->
+        <property name="detailsUri" hidden="true" default="include/mantisbt/issuesbycategory/issues-by-category-detail-view.html" />
+        <property name="embedded" kind="boolean" hidden="true" default="true" required="false"/>
+        <property name="supportedScopes" kind="list_of_string" default="release" hidden="true"/>
+    </type>
+
+</synthetic>
